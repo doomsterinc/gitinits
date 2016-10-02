@@ -54,3 +54,10 @@ function getGithubCredentials(callback) {
 
   inquirer.prompt(questions).then(callback);
 }
+
+function getGithubToken(callback) {
+  var prefs = new Preferences('ginit');
+
+  if (prefs.github &amp;&amp; prefs.github.token) {
+    return callback(null, prefs.github.token);
+  }
