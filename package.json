@@ -13,7 +13,7 @@
   "author": "Maicon Giovani (Doomster)",
   "license": "ISC",
   "bin": {
-    "ginit": "./index.js"
+    "gitnits": "./index.js"
   },
   "dependencies": {
     "chalk": "^1.1.3",

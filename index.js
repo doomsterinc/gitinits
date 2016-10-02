@@ -19,7 +19,7 @@ var files       = require('./lib/files');
 clear();
 console.log(
   chalk.yellow(
-    figlet.textSync('Ginit', { horizontalLayout: 'full' })
+    figlet.textSync('gitnits', { horizontalLayout: 'full' })
   )
 );
 
@@ -64,7 +64,7 @@ function getGithubCredentials(callback) {
 }
 
 function getGithubToken(callback) {
-  var prefs = new Preferences('ginit');
+  var prefs = new Preferences('gitnits');
 
   if (prefs.github && prefs.github.token) {
     return callback(null, prefs.github.token);
@@ -85,7 +85,7 @@ function getGithubToken(callback) {
 
     github.authorization.create({
       scopes: ['user', 'public_repo', 'repo', 'repo:status'],
-      note: 'ginit, the command-line tool for initalizing Git repos'
+      note: 'gitnits, the command-line tool for initalizing Git repos'
     }, function(err, res) {
       status.stop();
       if ( err ) {
