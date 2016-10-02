@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+
+"use strict";
+
 var chalk       = require('chalk');
 var clear       = require('clear');
 var CLI         = require('clui');
@@ -10,7 +14,7 @@ var _           = require('lodash');
 var git         = require('simple-git')();
 var touch       = require('touch');
 var fs          = require('fs');
-var files = require('./lib/files');
+var files       = require('./lib/files');
 
 clear();
 console.log(
@@ -23,6 +27,10 @@ if (files.directoryExists('.git')) {
   console.log(chalk.red('Already a git repository!'));
   process.exit();
 }
+
+var github = new GitHubApi({
+  version: '3.0.0'
+});
 
 function getGithubCredentials(callback) {
   var questions = [
@@ -178,7 +186,7 @@ function createGitignore(callback) {
   }
 }
 
-function setupRepo( url, callback ) {
+function setupRepo(url, callback) {
   var status = new Spinner('Setting up the repository...');
   status.start();
 
@@ -194,3 +202,46 @@ function setupRepo( url, callback ) {
       return callback();
     });
 }
+
+function githubAuth(callback) {
+  getGithubToken(function(err, token) {
+    if (err) {
+      return callback(err);
+    }
+    github.authenticate({
+      type : 'oauth',
+      token : token
+    });
+    return callback(null, token);
+  });
+}
+
+githubAuth(function(err, authed) {
+  if (err) {
+    switch (err.code) {
+      case 401:
+        console.log(chalk.red('Couldn\'t log you in. Please try again.'));
+        break;
+      case 422:
+        console.log(chalk.red('You already have an access token.'));
+        break;
+    }
+  }
+  if (authed) {
+    console.log(chalk.green('Sucessfully authenticated!'));
+    createRepo(function(err, url){
+      if (err) {
+        console.log('An error has occured');
+      }
+      if (url) {
+        createGitignore(function() {
+          setupRepo(url, function(err) {
+            if (!err) {
+              console.log(chalk.green('All done!'));
+            }
+          });
+        });
+      }
+    });
+  }
+});
