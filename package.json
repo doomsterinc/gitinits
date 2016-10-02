@@ -1,6 +1,6 @@
 {
   "name": "gitnits",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "\"git init \" on steroids",
   "main": "index.js",
   "scripts": {
