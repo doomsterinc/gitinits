@@ -58,6 +58,38 @@ function getGithubCredentials(callback) {
 function getGithubToken(callback) {
   var prefs = new Preferences('ginit');
 
-  if (prefs.github &amp;&amp; prefs.github.token) {
+  if (prefs.github && prefs.github.token) {
     return callback(null, prefs.github.token);
   }
+
+  getGithubCredentials(function(credentials) {
+    var status = new Spinner('Authenticating you, please wait...');
+    status.start();
+
+    github.authenticate(
+      _.extend(
+        {
+          type: 'basic',
+        },
+        credentials
+      )
+    );
+
+    github.authorization.create({
+      scopes: ['user', 'public_repo', 'repo', 'repo:status'],
+      note: 'ginit, the command-line tool for initalizing Git repos'
+    }, function(err, res) {
+      status.stop();
+      if ( err ) {
+        return callback( err );
+      }
+      if (res.token) {
+        prefs.github = {
+          token : res.token
+        };
+        return callback(null, res.token);
+      }
+      return callback();
+    });
+  });
+}
