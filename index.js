@@ -93,3 +93,58 @@ function getGithubToken(callback) {
     });
   });
 }
+
+function createRepo(callback) {
+  var argv = require('minimist')(process.argv.slice(2));
+
+  var questions = [
+    {
+      type: 'input',
+      name: 'name',
+      message: 'Enter a name for the repository:',
+      default: argv._[0] || files.getCurrentDirectoryBase(),
+      validate: function( value ) {
+        if (value.length) {
+          return true;
+        } else {
+          return 'Please enter a name for the repository';
+        }
+      }
+    },
+    {
+      type: 'input',
+      name: 'description',
+      default: argv._[1] || null,
+      message: 'Optionally enter a description of the repository:'
+    },
+    {
+      type: 'list',
+      name: 'visibility',
+      message: 'Public or private:',
+      choices: [ 'public', 'private' ],
+      default: 'public'
+    }
+  ];
+
+  inquirer.prompt(questions).then(function(answers) {
+    var status = new Spinner('Creating repository...');
+    status.start();
+
+    var data = {
+      name : answers.name,
+      description : answers.description,
+      private : (answers.visibility === 'private')
+    };
+
+    github.repos.create(
+      data,
+      function(err, res) {
+        status.stop();
+        if (err) {
+          return callback(err);
+        }
+        return callback(null, res.ssh_url);
+      }
+    );
+  });
+}
