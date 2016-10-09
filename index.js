@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 "use strict";
-
+//requires
 var chalk       = require('chalk');
 var clear       = require('clear');
 var CLI         = require('clui');
@@ -15,7 +15,7 @@ var git         = require('simple-git')();
 var touch       = require('touch');
 var fs          = require('fs');
 var files       = require('./lib/files');
-
+//initial console
 clear();
 console.log(
   chalk.yellow(
@@ -27,7 +27,7 @@ if (files.directoryExists('.git')) {
   console.log(chalk.red('Already a git repository!'));
   process.exit();
 }
-
+//github api
 var github = new GitHubApi({
   version: '3.0.0'
 });
@@ -62,7 +62,7 @@ function getGithubCredentials(callback) {
 
   inquirer.prompt(questions).then(callback);
 }
-
+//github token
 function getGithubToken(callback) {
   var prefs = new Preferences('gitnits');
 
@@ -101,7 +101,7 @@ function getGithubToken(callback) {
     });
   });
 }
-
+//create Repository
 function createRepo(callback) {
   var argv = require('minimist')(process.argv.slice(2));
 
@@ -156,7 +156,7 @@ function createRepo(callback) {
     );
   });
 }
-
+//create git ignore
 function createGitignore(callback) {
   var filelist = _.without(fs.readdirSync('.'), '.git', '.gitignore');
 
