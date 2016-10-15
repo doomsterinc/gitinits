@@ -11,7 +11,7 @@
     "CLI"
   ],
   "author": "Maicon Giovani (Doomster)",
-  "license": "ISC",
+  "license": "MIT",
   "bin": {
     "gitnits": "./index.js"
   },
